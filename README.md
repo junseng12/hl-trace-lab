@@ -19,7 +19,7 @@ chmod 600 .env.local
 python 실행파일/테스트넷_사전점검.py --env .env.local
 ```
 
-자동 주문은 사전 점검 통과 후 `.env.local`의 `HL_ENABLE_SIGNED_ACTIONS=true`로 명시적으로 허용해야 합니다.
+`.env.local`의 `HL_ENABLE_SIGNED_ACTIONS=false`는 변경하지 마세요. Testnet 실행기가 네트워크·주소·Agent 키·한도를 검증한 뒤, 해당 실행 프로세스의 메모리에서만 서명을 일시 허용합니다.
 
 실험 순서:
 
