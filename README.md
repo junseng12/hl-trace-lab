@@ -2,18 +2,28 @@
 
 Hyperliquid의 `userFills`, 실시간 `trades` WebSocket, `recentTrades`를 비교해 **체결별 상대방을 어디까지 복원할 수 있는지** 재현하는 연구용 프로젝트입니다.
 
-## 빠른 시작 — Windows Git Bash
+## 빠른 시작 — WSL 2 + Ubuntu 24.04
 
-VS Code에서 Git Bash 터미널을 열고:
+Ubuntu 24.04 터미널에서:
 
 ```bash
+sudo apt update
+sudo apt install -y git gh python3 python3-venv python3-pip
+
+mkdir -p ~/projects
+cd ~/projects
+gh auth login --hostname github.com --git-protocol https --web
+gh repo clone junseng12/hl-trace-lab
+cd hl-trace-lab
+
 bash 실행파일/설치.sh
-source .venv/Scripts/activate
+source .venv/bin/activate
 cp .env.example .env.local
 chmod 600 .env.local
+code .
 ```
 
-Linux/WSL에서는 `source .venv/bin/activate`를 사용합니다.
+Windows Git Bash를 사용할 경우에만 `source .venv/Scripts/activate`를 사용합니다. `설치.sh`는 두 환경을 자동 감지합니다.
 
 `.env.local`에 Testnet Master 공개 주소와 Agent 정보를 입력한 뒤 먼저 읽기 전용 점검을 실행합니다.
 
