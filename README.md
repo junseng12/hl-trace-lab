@@ -2,16 +2,18 @@
 
 Hyperliquid의 `userFills`, 실시간 `trades` WebSocket, `recentTrades`를 비교해 **체결별 상대방을 어디까지 복원할 수 있는지** 재현하는 연구용 프로젝트입니다.
 
-## 빠른 시작
+## 빠른 시작 — Windows Git Bash
 
-Linux 또는 WSL에서:
+VS Code에서 Git Bash 터미널을 열고:
 
 ```bash
 bash 실행파일/설치.sh
-source .venv/bin/activate
+source .venv/Scripts/activate
 cp .env.example .env.local
 chmod 600 .env.local
 ```
+
+Linux/WSL에서는 `source .venv/bin/activate`를 사용합니다.
 
 `.env.local`에 Testnet Master 공개 주소와 Agent 정보를 입력한 뒤 먼저 읽기 전용 점검을 실행합니다.
 
