@@ -20,10 +20,13 @@ from pathlib import Path
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parent
+REPO_ROOT = SCRIPT_DIR.parents[1]
 DEFAULT_ENV = REPO_ROOT / ".env.local"
 
 
+# ---------------------------------------------------------------------------
+# 1) Public evidence helpers
+# ---------------------------------------------------------------------------
 def post(requests_module, api_url: str, payload: dict) -> object:
     response = requests_module.post(api_url.rstrip("/") + "/info", json=payload, timeout=20)
     response.raise_for_status()
@@ -36,7 +39,16 @@ def trade_key(item: dict) -> tuple[str, str, str] | None:
     return str(item["time"]), str(item["coin"]), str(item["tid"])
 
 
+# ---------------------------------------------------------------------------
+# 2) Safe Testnet execution and evidence collection
+# ---------------------------------------------------------------------------
 def main() -> None:
+    """Create one bounded maker/taker fill and immediately reconstruct it.
+
+    Safety order:
+      validate network/config -> verify balances/caps -> start WebSocket ->
+      place maker -> confirm best ask -> place IOC taker -> save public proof.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--lab-root", type=Path, default=SCRIPT_DIR)
     parser.add_argument("--env", type=Path, default=DEFAULT_ENV)
@@ -57,6 +69,8 @@ def main() -> None:
     Cloid = importlib.import_module("hyperliquid.utils.types").Cloid
 
     logging.disable(logging.DEBUG)
+    # The file must remain locked. Signed actions are enabled only in this
+    # process after every Testnet, address, Agent-key and hard-cap check passes.
     raw = preflight.read_config(args.env)
     if raw.get("HL_ENABLE_SIGNED_ACTIONS", "").strip().lower() != "false":
         raise SystemExit("REFUSED: source config must remain locked with signed actions disabled.")
@@ -93,6 +107,7 @@ def main() -> None:
     }
     recent_before = post(requests, validated.api_url, {"type": "recentTrades", "coin": market.wire_coin})
 
+    # Start evidence capture before either controlled order is submitted.
     capture = a1.WsCapture(validated.api_url, market, validated.wallets)
     capture.start()
     pilot_root = args.output_dir / "runner"
@@ -133,6 +148,8 @@ def main() -> None:
             raise RuntimeError("Configured Agent key mismatch.")
         maker_exchange = Exchange(seller_signer, validated.api_url, account_address=seller_cfg.master)
         taker_exchange = Exchange(buyer_signer, validated.api_url, account_address=buyer_cfg.master)
+        # Maker first: its order must rest inside the spread.  If not, the
+        # script refuses to send the second order and attempts cleanup.
         maker_response = maker_exchange.order(
             market.display_name,
             False,
@@ -150,6 +167,7 @@ def main() -> None:
         fresh_bid, fresh_ask, pre_ioc_book = spot.top(validated.api_url, market.wire_coin)
         if fresh_ask != price:
             raise RuntimeError("Maker was no longer the best ask; no taker order was sent.")
+        # IOC taker is sent only while the controlled maker remains best ask.
         taker_response = taker_exchange.order(
             market.display_name,
             True,
@@ -236,6 +254,8 @@ def main() -> None:
     w1_matches = matching_fills("W1", "userFills")
     w2_matches = matching_fills("W2", "userFills")
 
+    # Final report compares four views of the same tid: public trades stream,
+    # recentTrades, W1 userFills, and W2 userFills.
     report = {
         "schemaVersion": 1,
         "experiment": "Experiment 1 - per-fill counterparty storage and immediate reconstruction",

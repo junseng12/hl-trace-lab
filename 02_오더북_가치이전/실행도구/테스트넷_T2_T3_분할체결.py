@@ -15,10 +15,11 @@ from pathlib import Path
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parent
+REPO_ROOT = SCRIPT_DIR.parents[1]
 DEFAULT_ENV = REPO_ROOT / ".env.local"
 
 
+# 1) Public evidence helpers and the stable per-fill key.
 def post(requests_module, api_url: str, payload: dict) -> object:
     response = requests_module.post(api_url.rstrip("/") + "/info", json=payload, timeout=20)
     response.raise_for_status()
@@ -31,7 +32,9 @@ def trade_key(row: dict) -> tuple[str, str, str] | None:
     return str(row["time"]), str(row["coin"]), str(row["tid"])
 
 
+# 2) Controlled split-fill workflow with strict Testnet safety gates.
 def main() -> None:
+    """Create T2 or T3 split fills and preserve every public reconstruction key."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--lab-root", type=Path, default=SCRIPT_DIR)
     parser.add_argument("--env", type=Path, default=DEFAULT_ENV)
@@ -53,6 +56,7 @@ def main() -> None:
     Cloid = importlib.import_module("hyperliquid.utils.types").Cloid
     logging.disable(logging.DEBUG)
 
+    # Keep the file locked; signed mode exists only in memory for this process.
     raw = preflight.read_config(args.env)
     if raw.get("HL_ENABLE_SIGNED_ACTIONS", "").strip().lower() != "false":
         raise SystemExit("REFUSED: source config must remain locked.")

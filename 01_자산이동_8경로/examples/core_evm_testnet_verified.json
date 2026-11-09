@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Public-data reproduction examples for trace_core_evm.py",
+  "network": "testnet",
+  "coreToEvm": {
+    "classification": "UNIQUE_MATCH",
+    "user": "0xdd7b27b8c8160f3fd37f9f52b5d1ebd4d67c9db9",
+    "amountHype": "0.005",
+    "coreTimeMs": 1792951421234,
+    "coreHash": "0xe90183d6d8c22afcea7b042c963c5a0102009bbc73c549ce8cca2f2997c604e7",
+    "systemTxHash": "0x4edeb345c39a396f2e060f94cc75c11aeb56ed2f99c5c28b8d97489c75f5edfe",
+    "systemTxBlock": 67867860,
+    "timeDeltaMs": 766,
+    "standardEvmVisibility": {
+      "inEthGetBlockByNumberTransactions": false,
+      "ethGetTransactionByHash": null,
+      "ethGetTransactionReceipt": null
+    },
+    "join": ["same user", "HYPE", "exact amount", "adjacent time", "system address"]
+  },
+  "evmToCore": {
+    "classification": "UNIQUE_MATCH",
+    "user": "0x012b198d1c4b85e5ac34ebdc0a1eac911931ef2c",
+    "amountHype": "0.001",
+    "evmTxHash": "0x5c71f44115b5e6001cff79e8c3d232ae3c285be3ae05e9a15af73c0d8f79ceef",
+    "coreCreditHash": "0xc8d9b6386ba6133cca53042c96403a000014ce1e06a9320e6ca2618b2aa9ed27",
+    "timeDeltaMs": 395,
+    "join": ["same user", "HYPE", "exact amount", "adjacent time", "system address"]
+  },
+  "signedActions": false
+}

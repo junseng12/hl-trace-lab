@@ -36,6 +36,7 @@ NETWORKS = {
 }
 
 
+# 1) Public REST helpers: resolve the market and create comparable snapshots.
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -85,6 +86,7 @@ def write_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+# 2) Live evidence collector: persist every public trade before manual trading.
 class TradeStream:
     def __init__(self, ws_url: str, coin: str, output_path: Path) -> None:
         self.ws_url = ws_url
@@ -163,6 +165,7 @@ class TradeStream:
             self._file = None
 
 
+# 3) Before/after state: user history and market context.
 def account_snapshot(api_url: str, user: str) -> dict[str, Any]:
     return {
         "capturedAt": utc_now(),
@@ -185,6 +188,7 @@ def market_snapshot(api_url: str, wire_coin: str) -> dict[str, Any]:
     }
 
 
+# 4) Workflow: pre-state -> WebSocket -> manual trade -> post-state -> join.
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--network", choices=sorted(NETWORKS), required=True)

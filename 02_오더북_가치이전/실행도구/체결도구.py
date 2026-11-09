@@ -29,6 +29,7 @@ from hyperliquid.utils.types import Cloid
 
 
 HERE = Path(__file__).resolve().parent
+REPO_ROOT = HERE.parents[1]
 MIN_ORDER_USD = Decimal("10")
 BUYER_BALANCE_BUFFER = Decimal("1.01")
 WS_READY_TIMEOUT_SECONDS = 12.0
@@ -67,6 +68,9 @@ TERMINAL_ORDER_STATUSES = {
 }
 
 
+# ---------------------------------------------------------------------------
+# 1) Safety types, configuration loading and immutable experiment plan
+# ---------------------------------------------------------------------------
 class RunnerError(Exception):
     """Expected safe refusal or invalid experiment condition."""
 
@@ -151,6 +155,9 @@ def load_signed_config(path: Path) -> tuple[dict[str, str], preflight.ValidatedC
     return raw, validated, target
 
 
+# ---------------------------------------------------------------------------
+# 2) Resolve market metadata and build a legal, capped maker/taker plan
+# ---------------------------------------------------------------------------
 def resolve_hype_usdc(info: Any) -> SpotMarket:
     meta = info.spot_meta()
     tokens = meta.get("tokens", []) if isinstance(meta, dict) else []
@@ -310,6 +317,9 @@ def public_book_snapshot(info: Any, market: SpotMarket) -> dict[str, Any]:
     }
 
 
+# ---------------------------------------------------------------------------
+# 3) Start public evidence capture before any signed order
+# ---------------------------------------------------------------------------
 class WsCapture:
     def __init__(self, api_url: str, market: SpotMarket, wallets: tuple[preflight.WalletConfig, ...]) -> None:
         self.api_url = api_url
@@ -370,6 +380,9 @@ class WsCapture:
             return json.loads(json.dumps(self.events))
 
 
+# ---------------------------------------------------------------------------
+# 4) Interpret order responses and guarantee bounded cleanup
+# ---------------------------------------------------------------------------
 def new_cloid() -> tuple[str, Cloid]:
     raw = "0x" + secrets.token_hex(16)
     return raw, Cloid.from_str(raw)
@@ -568,6 +581,9 @@ def cleanup_maker_order(
     return report
 
 
+# ---------------------------------------------------------------------------
+# 5) Validate the public buyer/seller pair and write redacted evidence
+# ---------------------------------------------------------------------------
 def flatten_public_trades(ws_events: dict[str, Any]) -> list[dict[str, Any]]:
     trades: list[dict[str, Any]] = []
     for event in ws_events.get("market.trades", []):
@@ -712,6 +728,9 @@ def write_artifact(
     return destination
 
 
+# ---------------------------------------------------------------------------
+# 6) Execute exactly one Testnet A1 run under the validated plan
+# ---------------------------------------------------------------------------
 def execute_a1(validated: preflight.ValidatedConfig, target: Decimal, output_dir: Path) -> tuple[Path, str]:
     # The SDK logs signed request payloads at DEBUG. Keep those out of the
     # console; the curated artifact stores only public responses and state.
@@ -1019,11 +1038,16 @@ def execute_a1(validated: preflight.ValidatedConfig, target: Decimal, output_dir
     return destination, str(evidence["classification"])
 
 
+# ---------------------------------------------------------------------------
+# 7) CLI gate: explicit flag is mandatory before any signed action
+# ---------------------------------------------------------------------------
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--execute-testnet-a1", action="store_true")
-    parser.add_argument("--env", type=Path, default=HERE / ".env.local")
-    parser.add_argument("--output-dir", type=Path, default=HERE / "outputs")
+    parser.add_argument("--env", type=Path, default=REPO_ROOT / ".env.local")
+    parser.add_argument(
+        "--output-dir", type=Path, default=REPO_ROOT / "결과" / "테스트넷_A1"
+    )
     args = parser.parse_args()
 
     # This check intentionally happens before .env.local is read.

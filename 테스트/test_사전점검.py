@@ -1,6 +1,15 @@
 from __future__ import annotations
 
+import sys
 import unittest
+from pathlib import Path
+
+TOOLS = (
+    Path(__file__).resolve().parents[1]
+    / "02_오더북_가치이전"
+    / "실행도구"
+)
+sys.path.insert(0, str(TOOLS))
 
 import 테스트넷_사전점검 as preflight
 from eth_account import Account

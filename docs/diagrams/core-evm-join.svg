@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 700" role="img" aria-labelledby="title desc">
+  <title id="title">HyperCore and HyperEVM join structure</title>
+  <desc id="desc">The two directions of HYPE transfer are reconstructed without assuming the Core and EVM hashes are identical.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#475569"/></marker>
+    <style>
+      .bg{fill:#f8fafc}.lane{fill:#fff;stroke:#cbd5e1;stroke-width:2}.core{fill:#dbeafe;stroke:#2563eb;stroke-width:2}.evm{fill:#ede9fe;stroke:#7c3aed;stroke-width:2}.join{fill:#fef3c7;stroke:#d97706;stroke-width:2}.system{fill:#fee2e2;stroke:#dc2626;stroke-width:2}.t{font:700 27px system-ui,sans-serif;fill:#0f172a}.h{font:700 18px system-ui,sans-serif;fill:#0f172a}.p{font:14px system-ui,sans-serif;fill:#334155}.m{font:13px ui-monospace,monospace;fill:#334155}.line{stroke:#475569;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.dash{stroke:#94a3b8;stroke-width:2;stroke-dasharray:7 7;fill:none}.warn{font:700 14px system-ui,sans-serif;fill:#b91c1c}
+      @media(prefers-color-scheme:dark){.bg{fill:#0f172a}.lane{fill:#111827;stroke:#475569}.core{fill:#172554;stroke:#60a5fa}.evm{fill:#2e1065;stroke:#c4b5fd}.join{fill:#451a03;stroke:#fbbf24}.system{fill:#450a0a;stroke:#f87171}.t,.h{fill:#f8fafc}.p,.m{fill:#cbd5e1}.line{stroke:#94a3b8}.warn{fill:#fca5a5}}
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="700" rx="20"/>
+  <text class="t" x="55" y="50">HYPE transfer reconstruction across HyperCore and HyperEVM</text>
+
+  <rect class="lane" x="45" y="82" width="1190" height="245" rx="18"/>
+  <text class="h" x="70" y="117">A · HyperCore → HyperEVM</text>
+  <rect class="core" x="75" y="145" width="265" height="125" rx="14"/>
+  <text class="h" x="98" y="177">Core ledger update</text><text class="m" x="98" y="205">type = send</text><text class="p" x="98" y="230">user → 0x2222…2222</text><text class="p" x="98" y="252">HYPE 0.005 · hash A</text>
+  <rect class="join" x="455" y="145" width="350" height="125" rx="14"/>
+  <text class="h" x="480" y="177">Candidate join</text><text class="m" x="480" y="205">same user + HYPE + exact amount</text><text class="m" x="480" y="230">+ adjacent time + system address</text><text class="p" x="480" y="252">1 candidate → UNIQUE_MATCH</text>
+  <rect class="evm" x="920" y="145" width="265" height="125" rx="14"/>
+  <text class="h" x="943" y="177">EVM System TX</text><text class="p" x="943" y="205">0x2222…2222 → user</text><text class="p" x="943" y="230">value = 0.005 HYPE</text><text class="p" x="943" y="252">custom RPC · hash B</text>
+  <path class="line" d="M340 207H447"/><path class="line" d="M805 207H912"/>
+  <text class="warn" x="516" y="300">hash A ≠ hash B — do not join by hash</text>
+
+  <rect class="lane" x="45" y="355" width="1190" height="245" rx="18"/>
+  <text class="h" x="70" y="390">B · HyperEVM → HyperCore</text>
+  <rect class="evm" x="75" y="420" width="265" height="125" rx="14"/>
+  <text class="h" x="98" y="452">User-signed EVM TX</text><text class="p" x="98" y="480">user → 0x2222…2222</text><text class="p" x="98" y="505">value = 0.001 HYPE</text><text class="p" x="98" y="527">standard TX hash C</text>
+  <rect class="join" x="455" y="420" width="350" height="125" rx="14"/>
+  <text class="h" x="480" y="452">Candidate join</text><text class="m" x="480" y="480">tx.from + value + block time</text><text class="m" x="480" y="505">↔ Core destination + amount + time</text><text class="p" x="480" y="527">1 candidate → UNIQUE_MATCH</text>
+  <rect class="core" x="920" y="420" width="265" height="125" rx="14"/>
+  <text class="h" x="943" y="452">Core credit</text><text class="m" x="943" y="480">type = spotTransfer</text><text class="p" x="943" y="505">system → user</text><text class="p" x="943" y="527">HYPE 0.001 · hash D</text>
+  <path class="line" d="M340 482H447"/><path class="line" d="M805 482H912"/>
+
+  <rect class="system" x="360" y="625" width="560" height="45" rx="12"/>
+  <text class="h" x="405" y="654">System address: 0x2222222222222222222222222222222222222222</text>
+</svg>

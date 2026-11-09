@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Verified mainnet example for the userFills-to-trades join",
+  "network": "mainnet",
+  "market": {
+    "display": "HYPE/USDC",
+    "wire": "@107"
+  },
+  "targetUser": "0xdd7b27b8c8160f3fd37f9f52b5d1ebd4d67c9db9",
+  "key": {
+    "coin": "@107",
+    "time": 1793448616113,
+    "tid": 235730438209196
+  },
+  "fill": {
+    "side": "B",
+    "px": "87.805",
+    "sz": "0.17",
+    "hash": "0x2d19e7bc1a6780bc2e930447c2dcdc02032200a1b56a9f8ed0e2930ed96b5aa6",
+    "crossed": true
+  },
+  "publicTradeUsers": [
+    "0xdd7b27b8c8160f3fd37f9f52b5d1ebd4d67c9db9",
+    "0x1c1c270b573d55b68b3d14722b5d5d401511bed0"
+  ],
+  "recoveredCounterparty": "0x1c1c270b573d55b68b3d14722b5d5d401511bed0",
+  "source": "trades WebSocket",
+  "counterpartyUserFillsSameKey": true,
+  "signedActions": false
+}

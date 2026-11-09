@@ -18,7 +18,8 @@ from typing import Any
 
 
 HERE = Path(__file__).resolve().parent
-VENDOR = HERE.parent / "hyperliquid_mainnet_agent" / "vendor"
+REPO_ROOT = HERE.parents[1]
+VENDOR = REPO_ROOT / "hyperliquid_mainnet_agent" / "vendor"
 if VENDOR.is_dir():
     sys.path.insert(0, str(VENDOR))
 
@@ -43,6 +44,7 @@ HARD_CAPS: dict[str, Decimal | int] = {
 }
 
 
+# 1) Parse and validate local configuration without printing any secret.
 class PreflightError(Exception):
     """Safe, non-secret-bearing validation error."""
 
@@ -130,6 +132,7 @@ def parse_cap(config: dict[str, str], name: str) -> str | int:
 def validate_config(
     config: dict[str, str], *, signed_actions_required: bool = False
 ) -> ValidatedConfig:
+    """Enforce Testnet-only mode, unique wallets, valid Agent keys and caps."""
     network = require(config, "HL_NETWORK").lower()
     api_url = require(config, "HL_API_URL").rstrip("/")
     signing_enabled = require(config, "HL_ENABLE_SIGNED_ACTIONS").lower()
@@ -173,6 +176,7 @@ def validate_config(
     return ValidatedConfig(api_url, tuple(wallets), caps)
 
 
+# 2) Verify the public Master-Agent relationship and current account state.
 def public_wallet_state(info: Info, wallet: WalletConfig) -> dict[str, Any]:
     master_role = info.user_role(wallet.master)
     agent_role = info.user_role(wallet.agent)
@@ -219,6 +223,7 @@ def public_wallet_state(info: Info, wallet: WalletConfig) -> dict[str, Any]:
     }
 
 
+# 3) Redact-by-construction: refuse to write any artifact containing a key.
 def ensure_no_secrets(serialized: str, wallets: tuple[WalletConfig, ...]) -> None:
     lower_output = serialized.lower()
     for wallet in wallets:
@@ -238,6 +243,7 @@ def write_report(report: dict[str, Any], output_dir: Path, wallets: tuple[Wallet
     return destination
 
 
+# 4) Assemble the read-only preflight report.
 def run(env_path: Path, output_dir: Path) -> Path:
     config = validate_config(read_config(env_path))
     info = Info(config.api_url, skip_ws=True)
@@ -258,8 +264,10 @@ def run(env_path: Path, output_dir: Path) -> Path:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--env", type=Path, default=HERE.parent / ".env.local")
-    parser.add_argument("--output-dir", type=Path, default=HERE.parent / "결과" / "사전점검")
+    parser.add_argument("--env", type=Path, default=REPO_ROOT / ".env.local")
+    parser.add_argument(
+        "--output-dir", type=Path, default=REPO_ROOT / "결과" / "사전점검"
+    )
     args = parser.parse_args()
 
     try:

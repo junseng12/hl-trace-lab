@@ -20,9 +20,11 @@ from hyperliquid.utils.types import Cloid
 
 
 HERE = Path(__file__).resolve().parent
+REPO_ROOT = HERE.parents[1]
 ALLOWED_MARKETS = {"TEEYI/USDC", "BREAD/USDC"}
 
 
+# 1) Market metadata, order-book and balance helpers.
 def status(response: Any) -> Any:
     try:
         return response["response"]["data"]["statuses"][0]
@@ -68,7 +70,9 @@ def available(info: Info, address: str, coin: str) -> Decimal:
     return Decimal("0")
 
 
+# 2) One bounded Testnet maker/taker pair for repeatability pilots.
 def main() -> None:
+    """Validate caps, place a resting maker, then a matching IOC taker."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--market", choices=sorted(ALLOWED_MARKETS), required=True)
     parser.add_argument("--seller-slot", choices=("W2", "W4"), required=True)
@@ -84,7 +88,8 @@ def main() -> None:
     if not 100 <= args.delay_ms <= 1500:
         raise SystemExit("REFUSED: paired pilot delay must remain within 100-1500 ms.")
 
-    raw = preflight.read_config(HERE.parent / ".env.local")
+    # All signing material remains local and is checked against Agent addresses.
+    raw = preflight.read_config(REPO_ROOT / ".env.local")
     cfg = preflight.validate_config(raw, signed_actions_required=True)
     order_cap = Decimal(preflight.require(raw, "HL_MAX_ORDER_NOTIONAL_USD"))
     run_cap = Decimal(preflight.require(raw, "HL_MAX_RUN_NOTIONAL_USD"))
@@ -180,7 +185,7 @@ def main() -> None:
     for value in [seller_cfg.private_key, buyer_cfg.private_key]:
         if value.lower().removeprefix("0x") in serialized.lower():
             raise SystemExit("REFUSED: secret redaction invariant failed.")
-    out = HERE / "outputs" / "abc_study"
+    out = REPO_ROOT / "결과" / "abc_study"
     out.mkdir(parents=True, exist_ok=True)
     destination = out / f"spot_{args.market.split('/')[0].lower()}_{args.regime}_{args.seller_slot.lower()}_{args.buyer_slot.lower()}_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')}_{secrets.token_hex(3)}.json"
     destination.write_text(serialized + "\n", encoding="utf-8")

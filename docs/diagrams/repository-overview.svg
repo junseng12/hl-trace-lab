@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">HL Trace Lab 보고서와 코드 구조</title>
+  <desc id="desc">보고서 2장의 전체 자산 이동 8경로와 3장의 오더북 가치 이전 추적 코드 구조</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#475569"/></marker>
+    <style>
+      .bg{fill:#f8fafc}.panel{fill:#fff;stroke:#cbd5e1;stroke-width:2}.route{fill:#dbeafe;stroke:#2563eb;stroke-width:2}.order{fill:#dcfce7;stroke:#16a34a;stroke-width:2}.result{fill:#fef3c7;stroke:#d97706;stroke-width:2}.title{font:700 27px system-ui,sans-serif;fill:#0f172a}.head{font:700 19px system-ui,sans-serif;fill:#0f172a}.body{font:15px system-ui,sans-serif;fill:#334155}.mono{font:13px ui-monospace,monospace;fill:#334155}.line{stroke:#475569;stroke-width:2.3;fill:none;marker-end:url(#arrow)}
+      @media(prefers-color-scheme:dark){.bg{fill:#0f172a}.panel{fill:#111827;stroke:#475569}.route{fill:#172554;stroke:#60a5fa}.order{fill:#052e16;stroke:#4ade80}.result{fill:#451a03;stroke:#fbbf24}.title,.head{fill:#f8fafc}.body,.mono{fill:#cbd5e1}.line{stroke:#94a3b8}}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="560" rx="20"/>
+  <text class="title" x="55" y="50">HL Trace Lab · 보고서 목차와 동일한 두 실험</text>
+
+  <rect class="panel" x="55" y="80" width="1090" height="210" rx="18"/>
+  <text class="head" x="85" y="115">보고서 2장 · 전체 자산 이동 8경로</text>
+  <rect class="route" x="85" y="140" width="225" height="95" rx="14"/>
+  <text class="head" x="115" y="174">외부 네트워크</text><text class="body" x="115" y="202">Arbitrum · Bitcoin · Base</text>
+  <rect class="route" x="380" y="140" width="190" height="95" rx="14"/>
+  <text class="head" x="425" y="174">HyperCore</text><text class="body" x="425" y="202">공개 원장</text>
+  <rect class="route" x="640" y="140" width="190" height="95" rx="14"/>
+  <text class="head" x="682" y="174">HyperEVM</text><text class="body" x="682" y="202">TX · System TX</text>
+  <rect class="result" x="900" y="140" width="210" height="95" rx="14"/>
+  <text class="head" x="930" y="174">경로별 판정</text><text class="mono" x="930" y="202">후보 1개만 확정</text>
+  <path class="line" d="M310 187H372"/><path class="line" d="M570 187H632"/><path class="line" d="M830 187H892"/>
+  <text class="body" x="85" y="265">주소 · 자산 · 수량 · 시각 · 공통 프로토콜 식별자를 결합하고 원문 JSON을 보존</text>
+
+  <rect class="panel" x="55" y="320" width="1090" height="190" rx="18"/>
+  <text class="head" x="85" y="355">보고서 3장 · HyperCore 오더북 기반 가치 이전 추적</text>
+  <rect class="order" x="85" y="380" width="225" height="90" rx="14"/>
+  <text class="head" x="120" y="414">의심 주소</text><text class="mono" x="120" y="442">userFills</text>
+  <rect class="order" x="390" y="380" width="250" height="90" rx="14"/>
+  <text class="head" x="420" y="414">체결 결합</text><text class="mono" x="420" y="442">coin + time + tid</text>
+  <rect class="order" x="720" y="380" width="210" height="90" rx="14"/>
+  <text class="head" x="750" y="414">양쪽 주소</text><text class="body" x="750" y="442">WebSocket · node</text>
+  <rect class="result" x="995" y="380" width="115" height="90" rx="14"/>
+  <text class="head" x="1017" y="414">복원</text><text class="body" x="1017" y="442">상대방</text>
+  <path class="line" d="M310 425H382"/><path class="line" d="M640 425H712"/><path class="line" d="M930 425H987"/>
+  <text class="body" x="85" y="535">공통 원칙 · 원자료 보존, 후보 수 공개, 기술적 연결과 불법 의도 판정 분리</text>
+</svg>

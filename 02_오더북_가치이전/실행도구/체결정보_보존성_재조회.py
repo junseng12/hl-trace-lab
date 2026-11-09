@@ -13,6 +13,7 @@ import requests
 API_URL = "https://api.hyperliquid-testnet.xyz"
 
 
+# 1) Public API and normalization helpers. No private key is loaded.
 def post(payload: dict) -> object:
     response = requests.post(API_URL + "/info", json=payload, timeout=20)
     response.raise_for_status()
@@ -27,7 +28,9 @@ def normalize_users(value: object) -> list[str]:
     return []
 
 
+# 2) Re-query old tids and compare what remains in each public source.
 def main() -> None:
+    """Measure whether known counterparties can still be reconstructed later."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reference", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
